@@ -1,0 +1,13 @@
+{
+  "name": "eduardovillao/wpsince",
+  "description": "Analyze your plugin's compatibility with specific WordPress versions using @since tags, readme.txt, and block API.",
+  "type": "project",
+  "require": {
+    "php": ">=7.4",
+    "nikic/php-parser": "^4.15"
+  },
+  "autoload": {},
+  "scripts": {
+    "generate-since": "php generate-since-json.php"
+  }
+}

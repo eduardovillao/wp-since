@@ -1,0 +1,51 @@
+name: Generate WP Since Map
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout projeto
+        uses: actions/checkout@v4
+
+      - name: Instalar dependências PHP
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y php php-cli php-mbstring unzip curl
+
+      - name: Instalar Composer
+        run: |
+          curl -sS https://getcomposer.org/installer | php
+          sudo mv composer.phar /usr/local/bin/composer
+
+      - name: Instalar dependências do projeto
+        run: composer install
+
+      - name: Baixar WordPress
+        run: |
+          curl -s https://api.github.com/repos/WordPress/WordPress/releases/latest \
+            | grep "tarball_url" \
+            | cut -d '"' -f 4 \
+            | xargs curl -L -o wp.tar.gz
+          mkdir wp-source
+          tar -xzf wp.tar.gz -C wp-source --strip-components=1
+
+      - name: Gerar arquivo JSON
+        run: php generate-since-json.php
+
+      - name: Limpar arquivos temporários
+        run: rm -rf wp.tar.gz wp-source
+
+      - name: Commit JSON
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Actions"
+          git add wp-since.json
+          VERSION=$(jq -r 'to_entries | map(.value.since) | max' wp-since.json)
+          DATE=$(date +\"%Y-%m-%d\")
+          git commit -m \"chore(data): update since map for WP $VERSION on $DATE\" || echo \"Notting to commit\"
+          git push
+        shell: bash
