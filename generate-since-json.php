@@ -6,6 +6,7 @@ use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
+use PhpParser\NodeVisitor\ParentConnectingVisitor;
 
 $sourceDir = __DIR__ . '/wp-source';
 $outputPath = __DIR__ . '/wp-since.json';
@@ -62,10 +63,10 @@ class SinceExtractor extends NodeVisitorAbstract
             $this->addResult($node->name->toString(), $type, $since, $deprecated);
         } elseif ($node instanceof Node\Stmt\ClassMethod && !$node->isPrivate()) {
             $class = $node->getAttribute('parent');
-            $className = $class ? $class->name->toString() : 'Anonymous';
+            $className = $class instanceof Node\Stmt\Class_ && $class->name ? $class->name->toString() : 'Anonymous';
             $methodName = $node->name->toString();
             $methodSince = $since ?: ($class && $class->getDocComment() ? $this->extractTag($class->getDocComment()->getText(), '@since') : null);
-            if ($className !== 'Anonymous') {
+            if ($className !== 'Anonymous' && $methodSince) {
                 $this->addResult("$className::$methodName", 'method', $methodSince, $deprecated);
             }
         } elseif (
@@ -119,6 +120,7 @@ foreach ($rii as $file) {
         $ast = $parser->parse($code);
 
         $traverser = new NodeTraverser();
+        $traverser->addVisitor(new ParentConnectingVisitor());
         $traverser->addVisitor(new SinceExtractor($relativePath, $result));
         $traverser->traverse($ast);
 
