@@ -11,8 +11,6 @@ $sourceDir = __DIR__ . '/wp-source';
 $outputPath = __DIR__ . '/wp-since.json';
 
 $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-$traverser = new NodeTraverser();
-
 $result = [];
 
 class SinceExtractor extends NodeVisitorAbstract
@@ -94,9 +92,9 @@ foreach ($rii as $file) {
             }
         }
 
+        $traverser = new NodeTraverser();
         $traverser->addVisitor(new SinceExtractor($relativePath, $result));
         $traverser->traverse($ast);
-        $traverser->removeVisitor($traverser->getVisitors()[0]); // limpa pra próximo arquivo
 
     } catch (Error $e) {
         echo "Erro ao processar {$relativePath}: {$e->getMessage()}\n";
