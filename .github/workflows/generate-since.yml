@@ -36,6 +36,10 @@ jobs:
       - name: Limpar arquivos temporários
         run: rm -rf wp.tar.gz wp-source
 
+      - name: Set up push access
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+
       - name: Commit JSON
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
