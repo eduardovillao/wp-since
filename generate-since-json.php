@@ -68,7 +68,11 @@ class SinceExtractor extends NodeVisitorAbstract
             if ($className !== 'Anonymous') {
                 $this->addResult("$className::$methodName", 'method', $methodSince, $deprecated);
             }
-        } elseif ($node instanceof Node\Expr\FuncCall && isset($node->name) && ($node->name->toString() === 'do_action' || $node->name->toString() === 'apply_filters')) {
+        } elseif (
+            $node instanceof Node\Expr\FuncCall &&
+            $node->name instanceof Node\Name &&
+            in_array($node->name->toString(), ['do_action', 'apply_filters'], true)
+        ) {
             $hookNameNode = $node->args[0]->value ?? null;
             if ($hookNameNode instanceof Node\Scalar\String_) {
                 $hookName = $hookNameNode->value;
