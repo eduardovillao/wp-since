@@ -26,12 +26,9 @@ jobs:
 
       - name: Baixar WordPress
         run: |
-          curl -s https://api.github.com/repos/WordPress/WordPress/releases/latest \
-            | grep "tarball_url" \
-            | cut -d '"' -f 4 \
-            | xargs curl -L -o wp.tar.gz
-          mkdir wp-source
-          tar -xzf wp.tar.gz -C wp-source --strip-components=1
+          curl -O https://wordpress.org/latest.zip
+          unzip latest.zip -d wp-source
+          mv wp-source/wordpress/* wp-source/
 
       - name: Gerar arquivo JSON
         run: php generate-since-json.php
