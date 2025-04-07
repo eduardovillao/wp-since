@@ -12,7 +12,8 @@
     }
   },
   "scripts": {
-    "generate-since": "php generate-since-json.php"
+    "generate-since": "php generate-since-json.php",
+    "tests:unit": "phpunit tests --testdox --colors"
   },
   "require-dev": {
     "phpunit/phpunit": "^10.5"
