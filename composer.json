@@ -6,8 +6,15 @@
     "php": ">=7.4",
     "nikic/php-parser": "^4.15"
   },
-  "autoload": {},
+  "autoload": {
+    "psr-4": {
+      "WP_Since\\": "src/"
+    }
+  },
   "scripts": {
     "generate-since": "php generate-since-json.php"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5"
   }
 }
