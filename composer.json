@@ -20,7 +20,7 @@
     "bin/wp-since"
   ],
   "scripts": {
-    "check": "php bin/wp-since check",
+    "check": "php bin/wp-since check ./tests/fixtures/plugin-full-test",
     "generate-since": "php generate-since-json.php",
     "tests:unit": "phpunit tests --testdox --colors",
     "lint": "phpcs",

@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use WP_Since\Runner\PluginCheckCommand;
+
+if ($argc < 2 || $argv[1] !== 'check') {
+    echo "🛠 Usage: wp-since check /path/to/plugin\n";
+    exit(0);
+}
+
+$pluginPath = $argv[2] ?? getcwd();
+$sinceMapPath = __DIR__ . '/../wp-since.json';
+
+exit(PluginCheckCommand::run($pluginPath, $sinceMapPath));
