@@ -2,16 +2,15 @@
 <ruleset name="WP-Since Ruleset">
   <description>PHP_CodeSniffer configuration for WP-Since</description>
 
-  <!-- Apenas PSR-12 -->
+  <!-- Only PSR-12 -->
   <rule ref="PSR12"/>
 
-  <!-- Diretórios analisados -->
+  <!-- To check -->
   <file>src</file>
   <file>tests</file>
 
-  <!-- Ignorar vendor -->
+  <!-- To ignore -->
   <exclude-pattern>vendor/*</exclude-pattern>
 
-  <!-- Opcional: mostrar todos os erros, mesmo que poucos -->
   <arg name="report-width" value="120"/>
 </ruleset>
