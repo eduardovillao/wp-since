@@ -12,14 +12,14 @@ class PluginScanner
 {
     public static function scan(string $path): array
     {
-        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $traverser = new NodeTraverser();
 
         $usedSymbols = [];
         $varMap = [];
 
         $traverser->addVisitor(new ParentConnectingVisitor());
-        $traverser->addVisitor(new class($usedSymbols, $varMap) extends NodeVisitorAbstract {
+        $traverser->addVisitor(new class ($usedSymbols, $varMap) extends NodeVisitorAbstract {
             private $usedSymbols;
             private $varMap;
 
@@ -40,9 +40,7 @@ class PluginScanner
                             $this->usedSymbols[] = $hookNameNode->value;
                         }
                     }
-                }
-
-                elseif ($node instanceof Node\Expr\New_ && $node->class instanceof Node\Name) {
+                } elseif ($node instanceof Node\Expr\New_ && $node->class instanceof Node\Name) {
                     $this->usedSymbols[] = (string)$node->class;
 
                     if (
@@ -54,9 +52,7 @@ class PluginScanner
                             $this->varMap[$varName] = (string)$node->class;
                         }
                     }
-                }
-
-                elseif (
+                } elseif (
                     $node instanceof Node\Expr\StaticCall &&
                     $node->class instanceof Node\Name &&
                     $node->name instanceof Node\Identifier
@@ -64,9 +60,7 @@ class PluginScanner
                     $class = (string)$node->class;
                     $method = (string)$node->name;
                     $this->usedSymbols[] = "$class::$method";
-                }
-
-                elseif (
+                } elseif (
                     $node instanceof Node\Expr\MethodCall &&
                     $node->var instanceof Node\Expr\Variable &&
                     $node->name instanceof Node\Identifier
@@ -83,7 +77,9 @@ class PluginScanner
 
         $rii = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
         foreach ($rii as $file) {
-            if ($file->isDir() || $file->getExtension() !== 'php') continue;
+            if ($file->isDir() || $file->getExtension() !== 'php') {
+                continue;
+            }
             $code = file_get_contents($file->getPathname());
             try {
                 $stmts = $parser->parse($code);

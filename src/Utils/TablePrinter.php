@@ -17,7 +17,7 @@ class TablePrinter
             }
         }
 
-        $drawLine = function($left, $middle, $right, $fill = '─') use ($widths) {
+        $drawLine = function ($left, $middle, $right, $fill = '─') use ($widths) {
             echo $left;
             foreach ($widths as $i => $w) {
                 echo str_repeat($fill, $w + 2);
@@ -26,7 +26,7 @@ class TablePrinter
             echo "\n";
         };
 
-        $drawRow = function($row, $sep = '│') use ($widths) {
+        $drawRow = function ($row, $sep = '│') use ($widths) {
             echo $sep;
             foreach ($row as $i => $cell) {
                 echo ' ' . str_pad($cell, $widths[$i]) . ' ' . $sep;
