@@ -15,7 +15,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          coverage: xdebug
           tools: composer, phpunit, phpcs
 
       - name: Install dependencies
@@ -23,7 +22,6 @@ jobs:
 
       - name: Run PHPCS (PSR-12)
         run: composer lint
-        # continue-on-error: false
 
       - name: Run PHPUnit tests
         run: composer tests:unit
