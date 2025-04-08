@@ -23,7 +23,7 @@ jobs:
 
       - name: Run PHPCS (PSR-12)
         run: composer lint
-        continue-on-error: false
+        # continue-on-error: false
 
       - name: Run PHPUnit tests
         run: composer tests:unit
