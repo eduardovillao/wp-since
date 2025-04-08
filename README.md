@@ -73,7 +73,7 @@ composer require --dev eduardovillao/wp-since
 ▶️ Run the compatibility check
 
 ```bash
-vendor/bin/wp-since check ./path-to-your-plugin
+./vendor/bin/wp-since check ./path-to-your-plugin
 ```
 
 ## 🛠️ Coming Soon
