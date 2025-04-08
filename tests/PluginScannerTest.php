@@ -3,27 +3,24 @@
 use PHPUnit\Framework\TestCase;
 use WP_Since\Scanner\PluginScanner;
 
-class PluginScannerTest extends TestCase
+final class PluginScannerTest extends TestCase
 {
-    public function testScanDetectsAllSymbols()
+    public function testDetectsAllSymbols()
     {
-        $path = __DIR__ . '/fixtures';
-        $symbols = PluginScanner::scan($path);
+        $pluginPath = __DIR__ . '/fixtures/plugin-full-test';
+        $symbols = PluginScanner::scan($pluginPath);
 
         $expected = [
-            'register_setting',
-            'do_action',
-            'init',
-            'apply_filters',
-            'custom_filter',
+            'add_option',
             'WP_Query',
-            'MyClass::boot'
+            'WP_Filesystem::get_contents',
+            'WP_User::add_cap',
+            'my_custom_hook',
+            'my_filter_hook',
         ];
 
         foreach ($expected as $symbol) {
-            $this->assertContains($symbol, $symbols, "Missing: {$symbol}");
+            $this->assertContains($symbol, $symbols, "Missing: $symbol");
         }
-
-        $this->assertNotEmpty($symbols);
     }
 }

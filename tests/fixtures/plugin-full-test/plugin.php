@@ -1,9 +1,13 @@
 <?php
 
-register_setting('my_option_group', 'my_option');
-new WP_Query();
+add_option('foo', 'bar');
 
-MyPlugin::boot();
+$query = new WP_Query();
 
-do_action('my_custom_hook');
-apply_filters('my_filter', 'value');
+WP_Filesystem::get_contents('/some/path');
+
+$user = new WP_User();
+$user->add_cap('edit_posts');
+
+do_action('my_custom_hook', 'param');
+apply_filters('my_filter_hook', 'value');

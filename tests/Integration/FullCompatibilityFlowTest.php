@@ -18,30 +18,26 @@ class FullCompatibilityFlowTest extends TestCase
         $this->assertEquals('5.5', $declaredVersion);
 
         $sinceMap = [
-            'register_setting'   => ['since' => '5.5.0'],
-            'WP_Query'           => ['since' => '3.0.0'],
-            'MyPlugin::boot'     => ['since' => '6.2.0'],
-            'my_custom_hook'     => ['since' => '6.0.0'],
-            'my_filter'          => ['since' => '5.3.0'],
+            'add_option'                      => ['since' => '2.0.0'],
+            'WP_Query'                        => ['since' => '3.0.0'],
+            'WP_Filesystem::get_contents'     => ['since' => '5.1.0'],
+            'WP_User::add_cap'                => ['since' => '5.7.0'],
+            'my_custom_hook'                  => ['since' => '6.0.0'],
+            'my_filter_hook'                  => ['since' => '5.3.0'],
         ];
 
         $checker = new CompatibilityChecker($sinceMap);
         $incompatible = $checker->check($symbols, $declaredVersion);
 
-        $this->assertArrayHasKey('MyPlugin::boot', $incompatible);
+        $this->assertArrayHasKey('WP_User::add_cap', $incompatible);
         $this->assertArrayHasKey('my_custom_hook', $incompatible);
-        $this->assertArrayNotHasKey('register_setting', $incompatible);
+
+        $this->assertArrayNotHasKey('add_option', $incompatible);
         $this->assertArrayNotHasKey('WP_Query', $incompatible);
-        $this->assertArrayNotHasKey('my_filter', $incompatible);
+        $this->assertArrayNotHasKey('WP_Filesystem::get_contents', $incompatible);
+        $this->assertArrayNotHasKey('my_filter_hook', $incompatible);
 
-        $expected = [
-            'register_setting',
-            'WP_Query',
-            'MyPlugin::boot',
-            'my_custom_hook',
-            'my_filter',
-        ];
-
+        $expected = array_keys($sinceMap);
         foreach ($expected as $symbol) {
             $this->assertContains($symbol, $symbols, "Missing symbol: {$symbol}");
         }

@@ -6,6 +6,7 @@ use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
+use PhpParser\NodeVisitor\ParentConnectingVisitor;
 
 class PluginScanner
 {
@@ -15,13 +16,17 @@ class PluginScanner
         $traverser = new NodeTraverser();
 
         $usedSymbols = [];
+        $varMap = [];
 
-        $traverser->addVisitor(new class($usedSymbols) extends NodeVisitorAbstract {
+        $traverser->addVisitor(new ParentConnectingVisitor());
+        $traverser->addVisitor(new class($usedSymbols, $varMap) extends NodeVisitorAbstract {
             private $usedSymbols;
+            private $varMap;
 
-            public function __construct(&$usedSymbols)
+            public function __construct(&$usedSymbols, &$varMap)
             {
                 $this->usedSymbols = &$usedSymbols;
+                $this->varMap = &$varMap;
             }
 
             public function enterNode(Node $node)
@@ -29,8 +34,7 @@ class PluginScanner
                 if ($node instanceof Node\Expr\FuncCall && $node->name instanceof Node\Name) {
                     $this->usedSymbols[] = (string)$node->name;
 
-                    $hookFunctions = ['do_action', 'apply_filters'];
-                    if (in_array((string)$node->name, $hookFunctions, true)) {
+                    if (in_array((string)$node->name, ['do_action', 'apply_filters'], true)) {
                         $hookNameNode = $node->args[0]->value ?? null;
                         if ($hookNameNode instanceof Node\Scalar\String_) {
                             $this->usedSymbols[] = $hookNameNode->value;
@@ -40,6 +44,16 @@ class PluginScanner
 
                 elseif ($node instanceof Node\Expr\New_ && $node->class instanceof Node\Name) {
                     $this->usedSymbols[] = (string)$node->class;
+
+                    if (
+                        $node->getAttribute('parent') instanceof Node\Expr\Assign &&
+                        $node->getAttribute('parent')->var instanceof Node\Expr\Variable
+                    ) {
+                        $varName = $node->getAttribute('parent')->var->name;
+                        if (is_string($varName)) {
+                            $this->varMap[$varName] = (string)$node->class;
+                        }
+                    }
                 }
 
                 elseif (
@@ -52,7 +66,18 @@ class PluginScanner
                     $this->usedSymbols[] = "$class::$method";
                 }
 
-                // (Opcional futuro: métodos de instância)
+                elseif (
+                    $node instanceof Node\Expr\MethodCall &&
+                    $node->var instanceof Node\Expr\Variable &&
+                    $node->name instanceof Node\Identifier
+                ) {
+                    $varName = $node->var->name;
+                    $method = (string)$node->name;
+                    if (is_string($varName) && isset($this->varMap[$varName])) {
+                        $class = $this->varMap[$varName];
+                        $this->usedSymbols[] = "$class::$method";
+                    }
+                }
             }
         });
 
@@ -64,7 +89,7 @@ class PluginScanner
                 $stmts = $parser->parse($code);
                 $traverser->traverse($stmts);
             } catch (\Exception $e) {
-                // add logging error soon
+                // Add error handling
             }
         }
 
