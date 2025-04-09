@@ -1,5 +1,4 @@
 <?php
-require 'vendor/autoload.php';
 
 use PhpParser\Error;
 use PhpParser\Node;
@@ -7,6 +6,8 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
 use PhpParser\NodeVisitor\ParentConnectingVisitor;
+
+require __DIR__ . '/vendor/autoload.php';
 
 $sourceDir = __DIR__ . '/wp-source';
 $outputPath = __DIR__ . '/wp-since.json';
@@ -125,9 +126,9 @@ foreach ($rii as $file) {
         $traverser->traverse($ast);
 
     } catch (Error $e) {
-        echo "Erro ao processar {$relativePath}: {$e->getMessage()}\n";
+        echo "Processing error {$relativePath}: {$e->getMessage()}\n";
     }
 }
 
 file_put_contents($outputPath, json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-echo "✅ Arquivo gerado em: {$outputPath}\n";
+echo "✅ File generated in: {$outputPath}\n";
