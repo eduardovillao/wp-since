@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_Since\Tests\Integration;
+
 use PHPUnit\Framework\TestCase;
 use WP_Since\Parser\ReadmeParser;
 use WP_Since\Scanner\PluginScanner;

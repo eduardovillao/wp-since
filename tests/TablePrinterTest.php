@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_Since\Tests;
+
 use PHPUnit\Framework\TestCase;
 use WP_Since\Utils\TablePrinter;
 
