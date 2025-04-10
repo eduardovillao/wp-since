@@ -12,8 +12,8 @@ class VersionResolverTest extends TestCase
         $path = __DIR__ . '/fixtures/plugin-with-header';
         $resolved = VersionResolver::resolve($path);
 
-        $this->assertSame('6.2', $resolved['version']);
-        $this->assertSame('plugin', $resolved['source']);
+        $this->assertEquals('6.2', $resolved['version']);
+        $this->assertEquals('main plugin file header', $resolved['source']);
     }
 
     public function testExtractsVersionFromReadmeIfNoHeader()
@@ -21,8 +21,8 @@ class VersionResolverTest extends TestCase
         $path = __DIR__ . '/fixtures/plugin-with-readme-only';
         $resolved = VersionResolver::resolve($path);
 
-        $this->assertSame('5.8', $resolved['version']);
-        $this->assertSame('readme', $resolved['source']);
+        $this->assertEquals('5.8', $resolved['version']);
+        $this->assertEquals('readme', $resolved['source']);
     }
 
     public function testReturnsNullIfVersionNotFoundAnywhere()

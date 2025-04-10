@@ -8,7 +8,7 @@
  * Author URI: https://eduardovillao.me/
  * Version: 1.0
  * Requires PHP: 7.4
- * Requires at least: 6.2
+ * Requires at least: 5.5
  * Text Domain: test-plugin
  * Domain Path: /languages
  * License: GPL-2.0+
