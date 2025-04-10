@@ -2,7 +2,7 @@
 
 namespace WP_Since\Runner;
 
-use WP_Since\Parser\ReadmeParser;
+use WP_Since\Resolver\VersionResolver;
 use WP_Since\Scanner\PluginScanner;
 use WP_Since\Checker\CompatibilityChecker;
 use WP_Since\Utils\TablePrinter;
@@ -17,27 +17,16 @@ class PluginCheckCommand
             return 1;
         }
 
-        $readmePath = null;
-        if (file_exists($pluginPath . '/readme.txt')) {
-            $readmePath = $pluginPath . '/readme.txt';
-        } elseif (file_exists($pluginPath . '/README.txt')) {
-            $readmePath = $pluginPath . '/README.txt';
-        }
-
-        echo "🔍 Scanning plugin files...\n";
-
-        if (!$readmePath) {
-            echo "❌ No readme.txt found in $pluginPath\n";
+        $versionResolver = VersionResolver::resolve($pluginPath);
+        if (!$versionResolver['version']) {
+            echo "❌ Could not determine the minimum required WP version.\n";
             return 1;
         }
 
-        $declaredVersion = ReadmeParser::getMinRequiredVersion($readmePath);
-        if (!$declaredVersion) {
-            echo "⚠️  Minimum version not declared in readme.txt\n";
-            return 1;
-        }
+        $source = $versionResolver['source'] ?? '';
+        $declaredVersion = $versionResolver['version'];
 
-        echo "✅ Found readme.txt → Minimum version declared: {$declaredVersion}\n\n";
+        echo "✅ Minimum version declared: {$declaredVersion} (from {$source})\n\n";
 
         $usedSymbols = PluginScanner::scan($pluginPath);
         $sinceMap = json_decode(file_get_contents($sinceMapPath), true);
