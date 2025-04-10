@@ -43,6 +43,7 @@ class FullCompatibilityFlowTest extends TestCase
         foreach ($expected as $symbol) {
             $this->assertContains($symbol, $symbols, "Missing symbol: {$symbol}");
 
+            // phpcs:disable Generic.Files.LineLength.TooLong
             $this->assertNotContains('some_ignored_func_folder', $symbols, 'Should ignore folder from /ignored-folder/');
             $this->assertNotContains('some_ignored_func_file', $symbols, 'Should ignore specific file /ignore-this.php');
             $this->assertNotContains('some_ignored_func_noslash', $symbols, 'Should ignore folder from ignored-no-slash/');
