@@ -76,6 +76,35 @@ composer require --dev eduardovillao/wp-since
 ./vendor/bin/wp-since check ./path-to-your-plugin
 ```
 
+### 🧹 Ignore Files & Folders
+
+By default, wp-since scans all `.php` files in your plugin directory.
+
+But what about files that don’t make it into your final plugin zip — like tests or dev tools? No worries — wp-since respects your ignore rules.
+
+**Supported ignore sources:**
+
+-   `.distignore`
+-   `.gitattributes` with `export-ignore`
+
+If any of those files are present, wp-since will automatically ignore the listed files or folders during analysis — just like svn export or plugin deployment.
+
+Example: .gitattributes
+
+```txt
+/tests/              export-ignore
+/tools/debug.php     export-ignore
+```
+
+Example: .distignore
+
+```txt
+/tests
+/tools/debug.php
+```
+
+> These paths will be excluded from compatibility checks. This helps avoid false positives caused by test or development files.
+
 ## 🛠️ Coming Soon
 
 -   GitHub Action integration
