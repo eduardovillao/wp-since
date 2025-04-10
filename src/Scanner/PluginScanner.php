@@ -7,6 +7,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
 use PhpParser\NodeVisitor\ParentConnectingVisitor;
+use WP_Since\Resolver\IgnoreRulesResolver;
 
 class PluginScanner
 {
@@ -75,12 +76,21 @@ class PluginScanner
             }
         });
 
+        $ignorePaths = IgnoreRulesResolver::getIgnoredPaths($path);
         $rii = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
         foreach ($rii as $file) {
-            if ($file->isDir() || $file->getExtension() !== 'php') {
+            $relativePath = str_replace($path . '/', '', $file->getPathname());
+
+            if (
+                $file->isDir() ||
+                $file->getExtension() !== 'php' ||
+                IgnoreRulesResolver::shouldIgnore($relativePath, $ignorePaths)
+            ) {
                 continue;
             }
+
             $code = file_get_contents($file->getPathname());
+
             try {
                 $stmts = $parser->parse($code);
                 $traverser->traverse($stmts);
