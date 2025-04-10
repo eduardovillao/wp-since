@@ -42,6 +42,10 @@ class FullCompatibilityFlowTest extends TestCase
         $expected = array_keys($sinceMap);
         foreach ($expected as $symbol) {
             $this->assertContains($symbol, $symbols, "Missing symbol: {$symbol}");
+
+            $this->assertNotContains('some_ignored_func_folder', $symbols, 'Should ignore folder from /ignored-folder/');
+            $this->assertNotContains('some_ignored_func_file', $symbols, 'Should ignore specific file /ignore-this.php');
+            $this->assertNotContains('some_ignored_func_noslash', $symbols, 'Should ignore folder from ignored-no-slash/');
         }
     }
 }
