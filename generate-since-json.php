@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/vendor/autoload.php';
 
 use PhpParser\Error;
 use PhpParser\Node;
@@ -6,8 +7,6 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
 use PhpParser\NodeVisitor\ParentConnectingVisitor;
-
-require __DIR__ . '/vendor/autoload.php';
 
 $sourceDir = __DIR__ . '/wp-source';
 $outputPath = __DIR__ . '/wp-since.json';
