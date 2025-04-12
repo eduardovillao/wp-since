@@ -1,5 +1,5 @@
 <?php
-require 'vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 use PhpParser\Error;
 use PhpParser\Node;
@@ -125,9 +125,9 @@ foreach ($rii as $file) {
         $traverser->traverse($ast);
 
     } catch (Error $e) {
-        echo "Erro ao processar {$relativePath}: {$e->getMessage()}\n";
+        echo "Processing error {$relativePath}: {$e->getMessage()}\n";
     }
 }
 
 file_put_contents($outputPath, json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-echo "✅ Arquivo gerado em: {$outputPath}\n";
+echo "✅ File generated in: {$outputPath}\n";
