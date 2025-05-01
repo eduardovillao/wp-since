@@ -105,6 +105,20 @@ Example: .distignore
 
 > These paths will be excluded from compatibility checks. This helps avoid false positives caused by test or development files.
 
+### 📝 Inline Ignore
+
+You can ignore specific lines from the scan by adding a special inline comment.
+
+This is useful when you conditionally use a newer function but know it’s safe, like:
+
+```php
+if (function_exists('wp_some_new_func')) {
+    return wp_some_new_func(); // @wp-since ignore
+}
+```
+
+> Only inline comments on the same line will be considered — comments above the line won’t trigger ignores.
+
 ## 🛠️ Coming Soon
 
 -   GitHub Action integration
