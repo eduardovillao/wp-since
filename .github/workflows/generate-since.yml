@@ -36,15 +36,30 @@ jobs:
       - name: Limpar arquivos temporários
         run: rm -rf wp.tar.gz wp-source
 
-      - name: Set up push access
-        run: |
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+      - name: Instalar GitHub CLI
+        run: sudo apt install gh -y
 
-      - name: Commit JSON
+      - name: Criar nova branch
+        run: |
+          BRANCH_NAME=update-since-map-${{ github.run_number }}
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          git checkout -b "$BRANCH_NAME"
+
+      - name: Commit mudanças
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "GitHub Actions"
           git add wp-since.json
           DATE=$(date +"%Y-%m-%d")
           git commit -m "chore(data): update since map on $DATE" || echo "Nada pra commitar"
-          git push
+          git push origin $BRANCH_NAME
+
+      - name: Criar Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --head "$BRANCH_NAME" \
+            --base main \
+            --title "chore(data): update since map" \
+            --body "Atualização automática do mapa de versões gerado por GitHub Actions."
