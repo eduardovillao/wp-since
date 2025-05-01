@@ -1,6 +1,6 @@
 name: Lint & Test PHP Project
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   quality-checks:
