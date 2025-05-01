@@ -11,6 +11,7 @@
 
   <!-- To ignore -->
   <exclude-pattern>vendor/*</exclude-pattern>
+  <exclude-pattern>tests/fixtures/*</exclude-pattern>
 
   <arg name="report-width" value="120"/>
 </ruleset>

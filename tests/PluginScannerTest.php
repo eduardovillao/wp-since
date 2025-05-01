@@ -31,10 +31,10 @@ final class PluginScannerTest extends TestCase
         $path = __DIR__ . '/fixtures/plugin-ignore-comment';
         $symbols = PluginScanner::scan($path);
 
-        $this->assertNotContains('add_option', $symbols, 'Should ignore symbol marked with @wp-since ignore');
-        $this->assertNotContains('should_be_ignored', $symbols, 'Should ignore symbol marked with @wp-since ignore');
-        $this->assertNotContains('wp_is_block_theme', $symbols, 'Should ignore symbol marked with @wp-since ignore');
-        $this->assertNotContains('should_be_ignored_space', $symbols, 'Should ignore symbol marked with @wp-since ignore');
+        $this->assertNotContains('add_option', $symbols, 'Should ignore symbol with @wp-since ignore');
+        $this->assertNotContains('should_be_ignored', $symbols, 'Should ignore symbolwith @wp-since ignore');
+        $this->assertNotContains('wp_is_block_theme', $symbols, 'Should ignore symbol with @wp-since ignore');
+        $this->assertNotContains('should_be_ignored_space', $symbols, 'Should ignore symbol with @wp-since ignore');
         $this->assertContains('do_action', $symbols, 'Should detect function call without ignore comment');
         $this->assertContains('my_custom_hook', $symbols, 'Should detect function call without ignore comment');
         $this->assertContains('register_setting', $symbols, 'Should detect function call without ignore comment');
