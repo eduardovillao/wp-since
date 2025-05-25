@@ -10,21 +10,23 @@ use WP_Since\Utils\VersionHelper;
 
 class PluginCheckCommand
 {
-    public static function run(string $pluginPath, string $sinceMapPath): int
+    public static function run(string $pluginPath, string $sinceMapPath, ?string $minWpVersion = null): int
     {
         if (!file_exists($sinceMapPath)) {
             echo "❌ wp-since.json not found. Run composer generate-since first.\n";
             return 1;
         }
 
-        $versionResolver = VersionResolver::resolve($pluginPath);
-        if (!$versionResolver['version']) {
-            echo "❌ Could not determine the minimum required WP version.\n";
-            return 1;
+        if (! $minWpVersion) {
+            $versionResolver = VersionResolver::resolve($pluginPath);
+            if (!$versionResolver || !$versionResolver['version']) {
+                echo "❌ Could not determine the minimum required WP version.\n";
+                return 1;
+            }
         }
 
-        $source = $versionResolver['source'] ?? '';
-        $declaredVersion = $versionResolver['version'];
+        $source          = $minWpVersion ? 'argument' : $versionResolver['source'] ?? '';
+        $declaredVersion = $minWpVersion ?? $versionResolver['version'];
 
         echo "✅ Minimum version declared: {$declaredVersion} (from {$source})\n\n";
 
