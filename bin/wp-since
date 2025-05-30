@@ -10,12 +10,33 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
 
 use WP_Since\Runner\PluginCheckCommand;
 
-if ($argc < 2 || $argv[1] !== 'check') {
-    echo "🛠 Usage: wp-since check /path/to/plugin\n";
+// Manual argument parsing to handle options regardless of position.
+$command      = null;
+$pluginPath   = null;
+$minWpVersion = null;
+
+for ($i = 1; $i < count($argv); $i++) {
+    $arg = $argv[$i];
+    
+    if (strpos($arg, '--min-wp-version=') === 0) {
+        $minWpVersion = substr($arg, strlen('--min-wp-version='));
+    } elseif ($arg === '--min-wp-version' && isset($argv[$i + 1])) {
+        $minWpVersion = $argv[++$i];
+    } elseif ($arg === 'check') {
+        $command = $arg;
+    } elseif ($command === 'check' && $pluginPath === null) {
+        $pluginPath = $arg;
+    }
+}
+
+if ($command !== 'check') {
+    echo "🛠 Usage: wp-since check [--min-version=X.X.X] /path/to/plugin\n";
+    echo "   Options:\n";
+    echo "   --min-wp-version=X.X.X  Manually specify the minimum WordPress version\n";
     exit(0);
 }
 
-$pluginPath = $argv[2] ?? getcwd();
+$pluginPath   = $pluginPath ?? getcwd();
 $sinceMapPath = __DIR__ . '/../wp-since.json';
 
-exit(PluginCheckCommand::run($pluginPath, $sinceMapPath));
+exit(PluginCheckCommand::run($pluginPath, $sinceMapPath, $minWpVersion));
