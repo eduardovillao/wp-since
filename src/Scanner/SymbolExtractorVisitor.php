@@ -39,7 +39,11 @@ class SymbolExtractorVisitor extends NodeVisitorAbstract
             if ($handler->supports($node)) {
                 $symbols = $handler->extract($node, $this->varMap);
                 foreach ($symbols as $symbol) {
-                    $this->usedSymbols[] = $symbol;
+                    if (is_array($symbol) && isset($symbol['type'], $symbol['name'])) {
+                        $this->usedSymbols[] = $symbol['type'] . ':' . $symbol['name'];
+                    } else {
+                        $this->usedSymbols[] = $symbol;
+                    }
                 }
                 break;
             }

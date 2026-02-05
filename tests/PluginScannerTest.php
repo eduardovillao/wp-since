@@ -13,12 +13,14 @@ final class PluginScannerTest extends TestCase
         $symbols = PluginScanner::scan($pluginPath);
 
         $expected = [
-            'add_option',
-            'WP_Query',
-            'WP_Filesystem::get_contents',
-            'WP_User::add_cap',
-            'my_custom_hook',
-            'my_filter_hook',
+            'function:add_option',
+            'function:set_transient',
+            'hook:set_transient',  // Same name as function - no collision
+            'class:WP_Query',
+            'method:WP_Filesystem::get_contents',
+            'method:WP_User::add_cap',
+            'hook:my_custom_hook',
+            'hook:my_filter_hook',
         ];
 
         foreach ($expected as $symbol) {
@@ -31,14 +33,13 @@ final class PluginScannerTest extends TestCase
         $path = __DIR__ . '/fixtures/plugin-ignore-comment';
         $symbols = PluginScanner::scan($path);
 
-        $this->assertNotContains('add_option', $symbols, 'Should ignore symbol with @wp-since ignore');
-        $this->assertNotContains('should_be_ignored', $symbols, 'Should ignore symbolwith @wp-since ignore');
-        $this->assertNotContains('wp_is_block_theme', $symbols, 'Should ignore symbol with @wp-since ignore');
-        $this->assertNotContains('should_be_ignored_space', $symbols, 'Should ignore symbol with @wp-since ignore');
-        $this->assertContains('do_action', $symbols, 'Should detect function call without ignore comment');
-        $this->assertContains('my_custom_hook', $symbols, 'Should detect function call without ignore comment');
-        $this->assertContains('register_setting', $symbols, 'Should detect function call without ignore comment');
-        $this->assertContains('wp_detected_function', $symbols, 'Should detect function call without ignore comment');
-        $this->assertContains('need_detect', $symbols, 'Should detect function call without ignore comment');
+        $this->assertNotContains('function:add_option', $symbols, 'Should ignore symbol with @wp-since ignore');
+        $this->assertNotContains('hook:should_be_ignored', $symbols, 'Should ignore symbol with @wp-since ignore');
+        $this->assertNotContains('function:wp_is_block_theme', $symbols, 'Should ignore symbol with @wp-since ignore');
+        $this->assertNotContains('hook:should_be_ignored_space', $symbols, 'Should ignore @wp-since ignore');
+        $this->assertContains('hook:my_custom_hook', $symbols, 'Should detect hook without ignore comment');
+        $this->assertContains('function:register_setting', $symbols, 'Should detect function without ignore');
+        $this->assertContains('function:wp_detected_function', $symbols, 'Should detect function without ignore');
+        $this->assertContains('hook:need_detect', $symbols, 'Should detect hook without ignore comment');
     }
 }

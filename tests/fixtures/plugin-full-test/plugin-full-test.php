@@ -17,6 +17,10 @@
 
 add_option('foo', 'bar');
 
+// Example of collision: set_transient exists as both function and hook
+set_transient('my_transient', 'value', 3600);
+do_action('set_transient', 'my_transient', 'value', 3600);
+
 $query = new WP_Query();
 
 WP_Filesystem::get_contents('/some/path');

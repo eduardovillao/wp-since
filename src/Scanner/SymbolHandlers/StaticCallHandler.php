@@ -17,6 +17,9 @@ class StaticCallHandler implements SymbolHandlerInterface
     {
         $class = (string) $node->class;
         $method = (string) $node->name;
-        return ["$class::$method"];
+        return [[
+            'name' => "$class::$method",
+            'type' => 'method',
+        ]];
     }
 }
