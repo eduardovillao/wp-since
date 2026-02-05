@@ -59,6 +59,9 @@ class SinceExtractor extends NodeVisitorAbstract
         if ($node instanceof Node\Stmt\Function_) {
             $this->addResult($node->name->toString(), 'function', $since, $deprecated);
         } elseif ($node instanceof Node\Stmt\Class_ || $node instanceof Node\Stmt\Interface_ || $node instanceof Node\Stmt\Trait_) {
+            if ($node->name === null) {
+                return; // Skip anonymous classes
+            }
             $type = $node instanceof Node\Stmt\Class_ ? 'class' : ($node instanceof Node\Stmt\Interface_ ? 'interface' : 'trait');
             $this->addResult($node->name->toString(), $type, $since, $deprecated);
         } elseif ($node instanceof Node\Stmt\ClassMethod && !$node->isPrivate()) {
