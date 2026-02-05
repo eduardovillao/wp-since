@@ -20,7 +20,10 @@ class MethodCallHandler implements SymbolHandlerInterface
 
         if (is_string($varName) && isset($varMap[$varName])) {
             $class = $varMap[$varName];
-            return ["$class::$method"];
+            return [[
+                'name' => "$class::$method",
+                'type' => 'method',
+            ]];
         }
 
         return [];

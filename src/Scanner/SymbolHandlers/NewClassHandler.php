@@ -13,8 +13,6 @@ class NewClassHandler implements SymbolHandlerInterface
 
     public function extract(Node $node, array &$varMap = []): array
     {
-        $symbols = [(string) $node->class];
-
         $parent = $node->getAttribute('parent');
         if (
             $parent instanceof Node\Expr\Assign &&
@@ -24,6 +22,9 @@ class NewClassHandler implements SymbolHandlerInterface
             $varMap[$parent->var->name] = (string) $node->class;
         }
 
-        return $symbols;
+        return [[
+            'name' => (string) $node->class,
+            'type' => 'class',
+        ]];
     }
 }

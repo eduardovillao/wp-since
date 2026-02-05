@@ -95,7 +95,7 @@ class SinceExtractor extends NodeVisitorAbstract
     private function addResult($name, $type, $since, $deprecated)
     {
         if ($since) {
-            $this->result[$name] = array_filter([
+            $this->result["$type:$name"] = array_filter([
                 'type' => $type,
                 'since' => $since,
                 'deprecated' => $deprecated,

@@ -40,7 +40,12 @@ class PluginCheckCommand
             echo "🚨 Compatibility issues found:\n\n";
             $rows = [];
             foreach ($incompatible as $symbol => $version) {
-                $rows[] = [$symbol, $version];
+                if (strpos($symbol, ':') !== false) {
+                    [$type, $name] = explode(':', $symbol, 2);
+                    $rows[] = ["$name ($type)", $version];
+                } else {
+                    $rows[] = [$symbol, $version];
+                }
             }
             TablePrinter::render($rows, ['Symbol', 'Introduced in WP']);
 

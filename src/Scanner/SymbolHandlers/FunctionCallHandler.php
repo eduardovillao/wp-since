@@ -13,13 +13,21 @@ class FunctionCallHandler implements SymbolHandlerInterface
 
     public function extract(Node $node, array &$varMap = []): array
     {
-        $symbols = [(string) $node->name];
+        $symbols = [];
 
         if (in_array((string) $node->name, ['do_action', 'apply_filters'], true)) {
             $hookNameNode = $node->args[0]->value ?? null;
             if ($hookNameNode instanceof Node\Scalar\String_) {
-                $symbols[] = $hookNameNode->value;
+                $symbols[] = [
+                    'name' => $hookNameNode->value,
+                    'type' => 'hook',
+                ];
             }
+        } else {
+            $symbols[] = [
+                'name' => (string) $node->name,
+                'type' => 'function',
+            ];
         }
 
         return $symbols;
