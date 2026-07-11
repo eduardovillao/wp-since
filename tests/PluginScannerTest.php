@@ -28,6 +28,18 @@ final class PluginScannerTest extends TestCase
         }
     }
 
+    public function testContinuesScanningWhenAFileCannotBeParsed()
+    {
+        $path = __DIR__ . '/fixtures/plugin-with-parse-error';
+        $symbols = PluginScanner::scan($path);
+
+        $this->assertContains(
+            'hook:parse_error_survivor',
+            $symbols,
+            'Valid files must still be scanned when another file fails to parse'
+        );
+    }
+
     public function testIgnoresSymbolsMarkedWithIgnoreComment()
     {
         $path = __DIR__ . '/fixtures/plugin-ignore-comment';
