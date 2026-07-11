@@ -16,6 +16,24 @@ class VersionResolverTest extends TestCase
         $this->assertEquals('main plugin file header', $resolved['source']);
     }
 
+    public function testExtractsVersionWhenMainFileNameDiffersFromDirectory()
+    {
+        $path = __DIR__ . '/fixtures/plugin-custom-main-file';
+        $resolved = VersionResolver::resolve($path);
+
+        $this->assertEquals('6.4', $resolved['version']);
+        $this->assertEquals('main plugin file header', $resolved['source']);
+    }
+
+    public function testExtractsVersionFromHeaderWithoutPerLineAsterisks()
+    {
+        $path = __DIR__ . '/fixtures/plugin-bare-header';
+        $resolved = VersionResolver::resolve($path);
+
+        $this->assertEquals('6.1', $resolved['version']);
+        $this->assertEquals('main plugin file header', $resolved['source']);
+    }
+
     public function testExtractsVersionFromReadmeIfNoHeader()
     {
         $path = __DIR__ . '/fixtures/plugin-with-readme-only';
