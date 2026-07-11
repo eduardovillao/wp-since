@@ -44,7 +44,7 @@ class PluginScanner
                 $stmts = $parser->parse($code);
                 $traverser->traverse($stmts);
             } catch (\Exception $e) {
-                // Add error handling
+                fwrite(STDERR, "⚠️  Skipped {$relativePath}: could not parse ({$e->getMessage()})\n");
             }
 
             $traverser->removeVisitor($visitor);
