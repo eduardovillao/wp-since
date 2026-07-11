@@ -4,12 +4,13 @@ namespace WP_Since\Resolver;
 
 class VersionResolver
 {
+    private const HEADER_BYTES = 8192;
+
     public static function resolve(string $pluginPath): ?array
     {
         $pluginFile = self::findMainPluginFile($pluginPath);
-
         if ($pluginFile) {
-            $version = self::extractVersionFromPluginHeader($pluginFile);
+            $version = self::extractRequiresAtLeast(self::readFileHeader($pluginFile));
             if ($version) {
                 return ['version' => $version, 'source' => 'main plugin file header'];
             }
@@ -17,7 +18,7 @@ class VersionResolver
 
         $readme = self::findReadmeFile($pluginPath);
         if ($readme) {
-            $version = self::extractVersionFromReadme($readme);
+            $version = self::extractRequiresAtLeast(self::readFileHeader($readme));
             if ($version) {
                 return ['version' => $version, 'source' => 'readme'];
             }
@@ -28,24 +29,10 @@ class VersionResolver
 
     private static function findMainPluginFile(string $pluginPath): ?string
     {
-        $basename = basename($pluginPath);
-        $candidate = "{$pluginPath}/{$basename}.php";
-        if (file_exists($candidate)) {
-            return $candidate;
-        }
-
-        return null;
-    }
-
-    private static function extractVersionFromPluginHeader(string $file): ?string
-    {
-        $contents = file_get_contents($file);
-        if (!$contents) {
-            return null;
-        }
-
-        if (preg_match('/^\s*\*\s+Requires at least:\s*([0-9.]+)/mi', $contents, $matches)) {
-            return $matches[1];
+        foreach (glob("{$pluginPath}/*.php") ?: [] as $file) {
+            if (stripos(self::readFileHeader($file), 'Plugin Name:') !== false) {
+                return $file;
+            }
         }
 
         return null;
@@ -59,19 +46,29 @@ class VersionResolver
                 return $full;
             }
         }
+
         return null;
     }
 
-    private static function extractVersionFromReadme(string $file): ?string
+    private static function extractRequiresAtLeast(string $contents): ?string
     {
-        $lines = file($file);
-        foreach ($lines as $line) {
-            if (stripos($line, 'Requires at least:') === 0) {
-                if (preg_match('/Requires at least:\s*([0-9.]+)/i', $line, $matches)) {
-                    return $matches[1];
-                }
-            }
+        if (preg_match('/^(?:[ \t]*<\?php)?[ \t\/*#@]*Requires at least:\s*([0-9.]+)/mi', $contents, $matches)) {
+            return $matches[1];
         }
+
         return null;
+    }
+
+    private static function readFileHeader(string $file): string
+    {
+        $handle = fopen($file, 'rb');
+        if (!$handle) {
+            return '';
+        }
+
+        $data = fread($handle, self::HEADER_BYTES);
+        fclose($handle);
+
+        return $data ?: '';
     }
 }
