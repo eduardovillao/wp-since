@@ -30,7 +30,7 @@ for ($i = 1; $i < count($argv); $i++) {
 }
 
 if ($command !== 'check') {
-    echo "🛠 Usage: wp-since check [--min-version=X.X.X] /path/to/plugin\n";
+    echo "🛠 Usage: wp-since check [--min-wp-version=X.X.X] /path/to/plugin\n";
     echo "   Options:\n";
     echo "   --min-wp-version=X.X.X  Manually specify the minimum WordPress version\n";
     exit(0);
