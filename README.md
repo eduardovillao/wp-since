@@ -22,7 +22,7 @@ Worried about accidentally using functions or APIs that don’t exist in declare
     -   Classes
     -   Class methods (static and instance)
     -   Action and filter hooks
--   📖 Reads the declared Requires at least: version from your `readme.txt`
+-   📖 Reads the declared `Requires at least:` version from your plugin's main file header — or `readme.txt` if the header doesn't set it
 -   🗂️ Compares those symbols with a version map built from WordPress core using `@since` tags
 -   🚨 Reports any used symbols that require a newer WP version than what’s declared
 
@@ -31,27 +31,25 @@ Worried about accidentally using functions or APIs that don’t exist in declare
 Let’s say your plugin uses `register_setting()` (introduced in WP `5.5`), but your `readme.txt` declares compatibility with WordPress `5.4`:
 
 ```bash
-🔍 Scanning plugin files...
-✅ Found readme.txt → Minimum version declared: 5.4
+✅ Minimum version declared: 5.4 (from readme)
 
 🚨 Compatibility issues found:
 
-┌──────────────────────┬──────────────────┐
-│ Symbol               │ Introduced in WP │
-├──────────────────────┼──────────────────┤
-│ register_setting     │ 5.5.0            │
-└──────────────────────┴──────────────────┘
+┌─────────────────────────────┬──────────────────┐
+│ Symbol                      │ Introduced in WP │
+├─────────────────────────────┼──────────────────┤
+│ register_setting (function) │ 5.5.0            │
+└─────────────────────────────┴──────────────────┘
 
-📌 Suggested version required: 5.5.0
+📌 Suggested version required:  5.5.0
 ```
 
 Now imagine your code is fully aligned with your declared version:
 
 ```bash
-🔍 Scanning plugin files...
-✅ Found readme.txt → Minimum version declared: 5.5
+✅ Minimum version declared: 5.5 (from readme)
 
-🎉 No compatibility issues found!
+✅ All good! Your plugin is compatible with WP 5.5.
 ```
 
 Simple. Powerful. Automatic.  
@@ -74,6 +72,12 @@ composer require --dev eduardovillao/wp-since
 
 ```bash
 ./vendor/bin/wp-since check ./path-to-your-plugin
+```
+
+By default the minimum WordPress version is detected automatically from your plugin header or `readme.txt`. To override it, pass `--min-wp-version`:
+
+```bash
+./vendor/bin/wp-since check ./path-to-your-plugin --min-wp-version=6.0
 ```
 
 ### 🧹 Ignore Files & Folders
